@@ -1,0 +1,31 @@
+templates:
+  tv:
+    transmission:
+      host: 192.168.10.197
+      port: 9091
+      username: admin
+      password: <pw>
+      ratio: 10.0
+      path: /volume1/downloads/TV Shows
+    regexp:
+      reject:
+        - mSD
+        - AFG
+        - FRENCH
+        - SPANISH
+    configure_series:
+      settings:
+        quality: 720p
+        propers: no  #1 weeks
+      from:
+        inputs:
+        - thetvdb_favorites:
+            account_id: A1BC4B325E37388F # Martin
+            strip_dates: yes
+tasks:
+  download-series:
+    rss:
+      url: <rss>
+      all_entries: no
+    template: tv
+    priority: 1
