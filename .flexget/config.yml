@@ -1,31 +1,87 @@
 templates:
   tv:
     transmission:
-      host: 192.168.10.197
-      port: 9091
+      host: localhost
+      port: 9092
       username: admin
       password: <pw>
-      ratio: 10.0
-      path: /volume1/downloads/TV Shows
+      addpaused: no
+      path: /mnt/HD/HD_a2/Media/TV Shows
     regexp:
       reject:
         - mSD
         - AFG
-        - FRENCH
-        - SPANISH
     configure_series:
       settings:
         quality: 720p
-        propers: no  #1 weeks
+        propers: no
       from:
-        inputs:
-        - thetvdb_favorites:
-            account_id: A1BC4B325E37388F # Martin
-            strip_dates: yes
+        thetvdb_list:
+          username: meric426
+          account_id: A1BC4B325E37388F
+
+  movie:
+    transmission:
+      host: localhost
+      port: 9092
+      username: admin
+      password: <pw>
+      addpaused: no
+      path: /mnt/HD/HD_a2/Media/Movies
+    quality: 720p
+    imdb_lookup: yes
+    list_match:
+      from:
+        - movie_list: imdb_movies
+
 tasks:
-  download-series:
+  populate_movie_list:
+    imdb_watchlist:
+      user_id: ur6720661
+      list: watchlist
+    accept_all: yes
+    list_add:
+      - movie_list: imdb_movies
+    priority: 4
+
+  tl-tv:
     rss:
-      url: <rss>
+      url: <url>
       all_entries: no
     template: tv
+    priority: 3
+
+  tl-movies:
+    rss:
+      url: <url>
+      all_entries: no
+    template: movie
+    priority: 5
+
+  unrar-movies:
+    accept_all: yes
+    filesystem:
+      path: /mnt/HD/HD_a2/Media/Movies
+      regexp: '.*\.(rar|zip)$'
+      recursive: yes
+      retrieve: files
+    regexp:
+      reject:
+        - '.subs'
+    only_new: no
+    decompress: true
     priority: 1
+
+  unrar-series:
+    accept_all: yes
+    filesystem:
+      path: /mnt/HD/HD_a2/Media/TV Shows
+      regexp: '.*\.(rar|zip)$'
+      recursive: yes
+      retrieve: files
+    regexp:
+      reject:
+        - '.subs'
+    only_new: no
+    decompress: true
+    priority: 2
